@@ -354,11 +354,11 @@ function App() {
         <nav className="topbar-actions">
           {state.public.stage === "lobby" && (
             <button className="top-action" onClick={() => setShowInvite(true)}>
-              邀请
+              邀请好友
             </button>
           )}
           <button className="top-action" onClick={() => setShowCrystals(true)}>
-            图鉴
+            水晶图鉴
           </button>
           {state.public.stage !== "lobby" && state.public.stage !== "ended" && (
             <button
@@ -388,7 +388,7 @@ function App() {
                 }
               }}
             >
-              解散
+              解散房间
             </button>
           )}
         </nav>

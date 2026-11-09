@@ -234,13 +234,14 @@ input:focus {
 .topbar-actions button.top-action {
   width: 100%;
   min-height: 42px;
-  padding: 0.65rem 0.4rem;
+  padding: 0.65rem 0.35rem;
   border: 1px solid #5a3d49;
   border-radius: 12px;
   color: #f2dce5;
   background: #302229;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .topbar-actions button.top-action.selected {
