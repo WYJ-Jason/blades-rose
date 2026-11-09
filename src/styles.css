@@ -1159,8 +1159,27 @@ input:focus {
   text-align: left;
 }
 
-.invite-modal .secondary {
-  width: 100%;
+.invite-modal .invite-actions .secondary {
+  width: auto;
+}
+
+.room-code {
+  margin: 0.2rem 0 0.85rem;
+  color: #ffe08a;
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  line-height: 1;
+}
+
+.invite-actions {
+  justify-content: stretch;
+  margin-top: 1rem;
+}
+
+.invite-actions button {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .invite-warning {

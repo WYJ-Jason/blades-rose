@@ -89,7 +89,6 @@ function App() {
   const [targets, setTargets] = useState<string[]>([]);
   const [selectedPlay, setSelectedPlay] = useState<string | "skip" | null>(null);
   const [joinBaseUrl, setJoinBaseUrl] = useState(window.location.origin);
-  const [lanUrl, setLanUrl] = useState(window.location.origin);
   const [publicUrl, setPublicUrl] = useState<string | null>(null);
   const [privateExpanded, setPrivateExpanded] = useState(false);
   const [handExpanded, setHandExpanded] = useState(false);
@@ -156,7 +155,6 @@ function App() {
             window.location.hostname !== "127.0.0.1");
         const publicBase = config.publicUrl || (onPublicHost ? siteOrigin : null);
         setJoinBaseUrl(publicBase || config.joinBaseUrl || siteOrigin);
-        setLanUrl(config.lanUrl);
         setPublicUrl(publicBase);
       })
       .catch(() => undefined);
@@ -273,13 +271,13 @@ function App() {
           </label>
           <div className="join-row">
             <label>
-              房间 PIN
+              房间号
               <input
                 value={pin}
                 inputMode="numeric"
                 maxLength={6}
                 onChange={(event) => setPin(event.target.value.replace(/\D/g, ""))}
-                placeholder="6位 PIN"
+                placeholder="6位房间号"
               />
             </label>
             <button disabled={busy || pin.length !== 6} onClick={() => enterRoom("join")}>
@@ -350,7 +348,7 @@ function App() {
     <main className="app-shell">
       <header className="topbar">
         <div className="topbar-identity">
-          <p className="eyebrow">房间 {state.public.pin}</p>
+          <p className="eyebrow">房间号 {state.public.pin}</p>
           <strong>{playerLabel(self)}</strong>
         </div>
         <nav className="topbar-actions">
@@ -673,8 +671,7 @@ function App() {
         <InviteModal
           pin={state.public.pin}
           joinUrl={joinUrl}
-          lanUrl={`${lanUrl}${window.location.pathname}?pin=${state.public.pin}`}
-          publicUrl={publicUrl ? `${publicUrl}${window.location.pathname}?pin=${state.public.pin}` : null}
+          publicUrl={publicUrl}
           onClose={() => setShowInvite(false)}
         />
       )}
@@ -1077,36 +1074,21 @@ function BoardZone({
   );
 }
 
-function lanInviteHint(joinUrl: string, lanUrl: string): string | null {
-  try {
-    const lanHost = new URL(lanUrl).hostname;
-    const joinHost = new URL(joinUrl).hostname;
-    if (lanHost === joinHost) return null;
-    if (lanHost.startsWith("192.168.") || lanHost.startsWith("10.")) return lanUrl;
-  } catch {
-    return null;
-  }
-  return null;
-}
-
 function InviteModal({
   pin,
   joinUrl,
-  lanUrl,
   publicUrl,
   onClose
 }: {
   pin: string;
   joinUrl: string;
-  lanUrl: string;
   publicUrl: string | null;
   onClose: () => void;
 }) {
-  const [copied, setCopied] = useState(false);
-  const lanHint = lanInviteHint(joinUrl, lanUrl);
-  const copyLink = async () => {
-    await navigator.clipboard.writeText(joinUrl);
-    setCopied(true);
+  const [copied, setCopied] = useState<"pin" | "link" | null>(null);
+  const copyText = async (value: string, kind: "pin" | "link") => {
+    await navigator.clipboard.writeText(value);
+    setCopied(kind);
   };
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -1114,25 +1096,28 @@ function InviteModal({
         <div className="modal-header">
           <div>
             <p className="eyebrow">邀请玩家</p>
-            <h2>房间 PIN · {pin}</h2>
+            <h2>分享房间号</h2>
           </div>
-          <button className="text-button" onClick={onClose}>关闭</button>
+          <button className="text-button" onClick={onClose}>
+            关闭
+          </button>
         </div>
+        <p className="room-code">{pin}</p>
         <div className="qr">
           <QRCodeSVG value={joinUrl} size={220} level="M" />
         </div>
-        {publicUrl ? (
-          <p className="hint-strong">扫码或打开链接即可加入</p>
-        ) : (
-          <p className="invite-warning">
-            当前只有局域网地址。手机开流量、或不在同一 Wi‑Fi 时无法加入。
-          </p>
+        <p className="hint-strong">扫码或分享房间号即可加入</p>
+        {!publicUrl && (
+          <p className="invite-warning">当前为局域网地址，请确保大家在同一 Wi‑Fi。</p>
         )}
-        <p className="join-address">{joinUrl}</p>
-        {lanHint && <p className="muted">局域网（仅同一 Wi‑Fi）：{lanHint}</p>}
-        <button className="secondary" onClick={copyLink}>
-          {copied ? "已复制" : "复制加入链接"}
-        </button>
+        <div className="button-row invite-actions">
+          <button className="secondary" onClick={() => copyText(pin, "pin")}>
+            {copied === "pin" ? "房间号已复制" : "复制房间号"}
+          </button>
+          <button className="secondary" onClick={() => copyText(joinUrl, "link")}>
+            {copied === "link" ? "链接已复制" : "复制链接"}
+          </button>
+        </div>
       </section>
     </div>
   );
