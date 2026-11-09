@@ -91,6 +91,13 @@ button.danger {
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
 }
 
+.hero-card h1 {
+  margin-bottom: 1.25rem;
+  text-align: center;
+  font-size: clamp(1.7rem, 5.4vw, 2.35rem);
+  line-height: 1.25;
+}
+
 h1,
 h2,
 h3,
@@ -129,8 +136,9 @@ label {
   display: grid;
   gap: 0.45rem;
   margin: 1rem 0;
-  color: #d7c4cc;
-  font-size: 0.9rem;
+  color: #f3d6e1;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 input {
@@ -275,7 +283,6 @@ input:focus {
 
 .lobby-hero p:last-child {
   margin-bottom: 0;
-  color: #cbb4be;
 }
 
 .ready-orb {
@@ -315,11 +322,25 @@ input:focus {
 
 .config-status,
 .drag-hint {
-  padding: 0.35rem 0.55rem;
+  padding: 0.4rem 0.7rem;
   border-radius: 999px;
-  color: #dca4b9;
-  background: #40202e;
-  font-size: 0.72rem;
+  color: #ffe08a;
+  background: #4a2a18;
+  border: 1px solid rgba(255, 224, 138, 0.35);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.hint-strong {
+  margin: 0;
+  color: #ffe08a;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.hint-strong.ready {
+  color: #9ef0c4;
 }
 
 .config-metrics {
@@ -723,9 +744,15 @@ input:focus {
 }
 
 .must-play-hint {
-  margin: 0.2rem 0 0;
-  color: #f0b4c6;
-  font-size: 0.9rem;
+  margin: 0.35rem 0 0.7rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid rgba(255, 224, 138, 0.4);
+  border-radius: 10px;
+  color: #ffe08a;
+  background: rgba(92, 52, 18, 0.42);
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.4;
 }
 
 .panel,
@@ -882,6 +909,11 @@ input:focus {
   display: grid;
   gap: 0.6rem;
   margin-top: 0.35rem;
+}
+
+.seats-panel > .hint-strong {
+  margin-top: 0.9rem;
+  text-align: center;
 }
 
 .kick-button,
@@ -1310,7 +1342,17 @@ input:focus {
 
 .error,
 .toast {
-  color: #ff9dac;
+  color: #ffd0d8;
+  font-weight: 800;
+}
+
+.hero-card .error {
+  margin: 0.9rem 0 0;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #c45a6c;
+  border-radius: 10px;
+  background: #481b25;
+  text-align: center;
 }
 
 .toast {
@@ -1332,6 +1374,15 @@ input:focus {
 @media (min-width: 760px) {
   .board-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .hero-card {
+    width: min(100%, 560px);
+  }
+
+  .hero-card h1 {
+    white-space: nowrap;
+    font-size: 2.35rem;
   }
 }
 

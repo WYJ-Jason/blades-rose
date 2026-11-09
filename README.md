@@ -1,5 +1,7 @@
 # 《血与刃的白蔷薇》辅助工具
 
+**在线打开：[https://blades-rose.onrender.com/](https://blades-rose.onrender.com/)**
+
 线下聚会用的多人 Web 工具。每人一台手机／平板／电脑，扫码或输入 PIN 进同一房间。系统代替实体身份牌、手牌、白水晶、金币和主版图，负责私密发牌、流程、限制、结算和胜负。
 
 - 5～10 人，一设备一席位，不注册账号。
@@ -26,6 +28,8 @@
 
 ## 启动
 
+已部署站点：**[https://blades-rose.onrender.com/](https://blades-rose.onrender.com/)**（推送到 `main` 后自动更新）。
+
 需要 **Node.js 22+**。
 
 ```bash
@@ -47,11 +51,11 @@ npm start
 
 局域网 IP 只在同一路由器下可用。手机必须连同一 Wi‑Fi，不能用流量。房主打开本机或局域网地址即可，二维码默认用局域网地址。
 
-### 跨网络：免费临时公网
+### 跨网络
 
-不买域名、不付费。Cloudflare 临时隧道可让 4G／5G、另一套 Wi‑Fi 或不在同一栋楼的玩家加入。地址每次随机，形如 `https://*.trycloudflare.com`，不能自定义成固定域名。
+平时直接打开已部署站点 [https://blades-rose.onrender.com/](https://blades-rose.onrender.com/)。邀请二维码和链接会使用这个地址。
 
-游戏已经 `npm start` 之后，**另开终端**：
+若在本机跑服务、又要让外网加入，可用免费 Cloudflare 临时隧道（地址每次随机，不能自定义域名）。本机 `npm start` 之后另开终端：
 
 ```bash
 npm run tunnel

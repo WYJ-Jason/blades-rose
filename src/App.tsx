@@ -148,9 +148,16 @@ function App() {
           }>
       )
       .then((config) => {
-        setJoinBaseUrl(config.publicUrl || config.joinBaseUrl || window.location.origin);
+        const siteOrigin = window.location.origin.replace(/\/$/, "");
+        const onPublicHost =
+          window.location.hostname.endsWith("onrender.com") ||
+          (window.location.protocol === "https:" &&
+            window.location.hostname !== "localhost" &&
+            window.location.hostname !== "127.0.0.1");
+        const publicBase = config.publicUrl || (onPublicHost ? siteOrigin : null);
+        setJoinBaseUrl(publicBase || config.joinBaseUrl || siteOrigin);
         setLanUrl(config.lanUrl);
-        setPublicUrl(config.publicUrl);
+        setPublicUrl(publicBase);
       })
       .catch(() => undefined);
     return () => {
@@ -254,9 +261,7 @@ function App() {
     return (
       <main className="landing">
         <section className="hero-card">
-          <p className="eyebrow">BLADES &amp; ROSE</p>
           <h1>血与刃的白蔷薇</h1>
-          <p className="subtitle">无需实体牌的线下多人辅助工具</p>
           <label>
             你的昵称
             <input
@@ -793,9 +798,10 @@ function Lobby({
     <>
       <section className="lobby-hero">
         <div>
-          <p className="eyebrow">游戏大厅</p>
           <h1>{players.length}<small>/10</small> 名玩家</h1>
-          <p>{players.length < 5 ? `还需 ${5 - players.length} 人即可开始` : "人数已满足，可以开始游戏"}</p>
+          <p className={`hint-strong ${players.length >= 5 ? "ready" : ""}`}>
+            {players.length < 5 ? `还需 ${5 - players.length} 人即可开始` : "人数已满足，可以开始"}
+          </p>
         </div>
         <div className={`ready-orb ${players.length >= 5 ? "ready" : ""}`}>
           {players.length >= 5 ? "READY" : "WAIT"}
@@ -804,10 +810,7 @@ function Lobby({
 
       <section className="panel config-panel">
         <div className="section-heading">
-          <div>
-            <p className="eyebrow">根据人数自动生成</p>
-            <h2>本局配置</h2>
-          </div>
+          <h2>本局配置</h2>
           <span className="config-status">{config ? "配置完成" : "等待5人"}</span>
         </div>
         {config ? (
@@ -820,17 +823,14 @@ function Lobby({
             <p className="role-summary">{config.roles}</p>
           </>
         ) : (
-          <p className="muted">玩家达到5人后，将自动展示身份数量与胜利条件。</p>
+          <p className="hint-strong">满 5 人后显示身份与胜利条件</p>
         )}
       </section>
 
       <section className="panel seats-panel">
         <div className="section-heading">
-          <div>
-            <p className="eyebrow">顺时针座位</p>
-            <h2>拖动调整座位</h2>
-          </div>
-          {isHost && <span className="drag-hint">按住拖动</span>}
+          <h2>座位</h2>
+          {isHost && <span className="drag-hint">按住拖动排序</span>}
         </div>
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
           <SortableContext
@@ -878,7 +878,7 @@ function Lobby({
             </button>
           </div>
         ) : (
-          <p className="muted">等待房主开始游戏</p>
+          <p className="hint-strong">等待房主开始游戏</p>
         )}
       </section>
     </>
@@ -1077,6 +1077,18 @@ function BoardZone({
   );
 }
 
+function lanInviteHint(joinUrl: string, lanUrl: string): string | null {
+  try {
+    const lanHost = new URL(lanUrl).hostname;
+    const joinHost = new URL(joinUrl).hostname;
+    if (lanHost === joinHost) return null;
+    if (lanHost.startsWith("192.168.") || lanHost.startsWith("10.")) return lanUrl;
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 function InviteModal({
   pin,
   joinUrl,
@@ -1091,6 +1103,7 @@ function InviteModal({
   onClose: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const lanHint = lanInviteHint(joinUrl, lanUrl);
   const copyLink = async () => {
     await navigator.clipboard.writeText(joinUrl);
     setCopied(true);
@@ -1109,17 +1122,14 @@ function InviteModal({
           <QRCodeSVG value={joinUrl} size={220} level="M" />
         </div>
         {publicUrl ? (
-          <p>当前二维码使用公网地址，不同网络的玩家也可以加入。</p>
+          <p className="hint-strong">扫码或打开链接即可加入</p>
         ) : (
           <p className="invite-warning">
-            当前只有局域网地址。手机开流量、或不在同一 Wi‑Fi 时无法加入。请在房主电脑另开终端运行
-            <code> npm run tunnel </code>
-            后再刷新本页。
+            当前只有局域网地址。手机开流量、或不在同一 Wi‑Fi 时无法加入。
           </p>
         )}
         <p className="join-address">{joinUrl}</p>
-        <p className="muted">局域网（仅同一 Wi‑Fi）：{lanUrl}</p>
-        {publicUrl && <p className="muted">公网：{publicUrl}</p>}
+        {lanHint && <p className="muted">局域网（仅同一 Wi‑Fi）：{lanHint}</p>}
         <button className="secondary" onClick={copyLink}>
           {copied ? "已复制" : "复制加入链接"}
         </button>

@@ -198,6 +198,8 @@ export const CRYSTALS: Record<number, { name: string; description: string }> = {
   }
 };
 
+export const DEFAULT_PUBLIC_URL = "https://blades-rose.onrender.com";
+
 export function factionForRole(role: Role): Faction {
   return role === "doubleBlade" || role === "giantBlade" || role === "darkBlade"
     ? "blade"

@@ -7,7 +7,7 @@ import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
 import { Server } from "socket.io";
 import { GameRoom, type GameRoomSnapshot } from "./game.ts";
-import type { Ack, StatePayload } from "./shared.ts";
+import { DEFAULT_PUBLIC_URL, type Ack, type StatePayload } from "./shared.ts";
 
 interface SocketIdentity {
   pin: string;
@@ -36,6 +36,9 @@ function getLanUrl(): string {
 function getPublicUrl(): string | null {
   const fromEnv = process.env.PUBLIC_URL?.replace(/\/$/, "");
   if (fromEnv) return fromEnv;
+  const fromRender = process.env.RENDER_EXTERNAL_URL?.replace(/\/$/, "");
+  if (fromRender) return fromRender;
+  if (process.env.RENDER) return DEFAULT_PUBLIC_URL;
   const publicUrlFile = join(dataDirectory, "public-url.txt");
   if (!existsSync(publicUrlFile)) return null;
   const fromFile = readFileSync(publicUrlFile, "utf8").trim().replace(/\/$/, "");
